@@ -1,23 +1,21 @@
 // src/pages/Login.jsx
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { Eye, EyeOff, GraduationCap, User, Lock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import axios from '../api/axiosInstance'; // axios instance with baseURL
+import axios from '../api/axiosInstance';
 import '../css/Login.css';
-import { AuthContext } from '../context/AuthContext.jsx'; // ✅ added
 
 export default function Login() {
-  const [role, setRole] = useState('student'); // student or tutor
-  const [identifier, setIdentifier] = useState(''); // registerNumber for student, email for tutor
+  const [role, setRole] = useState('student');
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [isFirstTimeUser, setIsFirstTimeUser] = useState(false); // only for students
+  const [isFirstTimeUser, setIsFirstTimeUser] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
   const navigate = useNavigate();
-  const { setUser, setRole: setAuthRole } = useContext(AuthContext); // ✅ added
 
   // Request OTP for first-time students
   const handleRequestOTP = async () => {
@@ -59,34 +57,24 @@ export default function Login() {
     try {
       let res;
       if (role === 'student') {
-        // Student login
         res = await axios.post('/auth/login', { registerNumber: identifier, password });
+
         if (!res?.data?.token) throw new Error('No token returned from student login');
 
-        // ✅ Store student info for persistent login
         localStorage.setItem('token', res.data.token);
-        localStorage.setItem('role', 'student'); // important for PrivateRoute
+        localStorage.setItem('role', 'student');
         localStorage.setItem('userName', res.data.student?.name || 'Student');
-
-        // ✅ update AuthContext
-        setUser(res.data.student);
-        setAuthRole('student');
 
         setSuccess(res.data.message || 'Student login successful');
         navigate('/dashboard');
       } else {
-        // Tutor login
         res = await axios.post('/tutors/login', { email: identifier, password });
+
         if (!res?.data?.token) throw new Error('No token returned from tutor login');
 
-        // ✅ Store tutor info for persistent login
         localStorage.setItem('tutorToken', res.data.token);
-        localStorage.setItem('role', 'tutor'); // important for TutorPrivateRoute
+        localStorage.setItem('role', 'tutor');
         localStorage.setItem('tutorName', res.data.tutor?.name || 'Tutor');
-
-        // ✅ update AuthContext
-        setUser(res.data.tutor);
-        setAuthRole('tutor');
 
         setSuccess(res.data.message || 'Tutor login successful');
         navigate('/tutor/dashboard');
@@ -136,11 +124,10 @@ export default function Login() {
         {success && <p className="success-message">{success}</p>}
 
         <div className="form-group">
-          <label className="form-label" htmlFor="identifier">
+          <label className="form-label">
             <User size={16} /> {role === 'student' ? 'Register Number' : 'Email'}
           </label>
           <input
-            id="identifier"
             type="text"
             placeholder={role === 'student' ? 'Enter your register number' : 'Enter your email'}
             className="form-input"
@@ -152,11 +139,10 @@ export default function Login() {
 
         {!isFirstTimeUser && (
           <div className="form-group password-wrapper">
-            <label className="form-label" htmlFor="password">
+            <label className="form-label">
               <Lock size={16} /> Password
             </label>
             <input
-              id="password"
               type={showPassword ? 'text' : 'password'}
               placeholder="Enter your password"
               className="form-input"
@@ -169,14 +155,13 @@ export default function Login() {
               className="show-password-btn"
               onClick={() => setShowPassword(!showPassword)}
               tabIndex={-1}
-              aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
           </div>
         )}
 
-        <div className="form-footer" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className="form-footer">
           {role === 'student' && (
             <label className="checkbox-label">
               <input
@@ -220,9 +205,7 @@ export default function Login() {
         )}
       </div>
 
-      <div className="footer-text">
-        Need help? Contact your institution's IT support
-      </div>
+      <div className="footer-text">Need help? Contact your institution's IT support</div>
     </div>
   );
 }
