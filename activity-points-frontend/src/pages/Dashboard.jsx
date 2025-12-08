@@ -1,14 +1,13 @@
 // src/pages/Dashboard.jsx
-import React, { useEffect, useState, useContext } from 'react';
-import axios from '../api/axiosInstance'; // axios instance with baseURL and headers
+import React, { useEffect, useState } from 'react';
+import axios from '../api/axiosInstance';
 import { useNavigate } from 'react-router-dom';
 import { Award, Star, Bell } from 'lucide-react';
 import BottomNav from '../components/BottomNav';
 import '../css/StudentDashboard.css';
-import { AuthContext } from '../context/AuthContext.jsx'; // ✅ added
 
 export default function Dashboard() {
-  const { user, role, setUser, setRole: setAuthRole } = useContext(AuthContext); // ✅ use context
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -17,8 +16,6 @@ export default function Dashboard() {
     localStorage.removeItem('token');
     localStorage.removeItem('role');
     localStorage.removeItem('userName');
-    setUser(null); // ✅ clear context
-    setAuthRole(null); // ✅ clear context
     navigate('/');
   };
 
@@ -29,13 +26,7 @@ export default function Dashboard() {
         const savedRole = localStorage.getItem('role');
 
         if (!token || savedRole !== 'student') {
-          navigate('/'); // redirect if no token or wrong role
-          return;
-        }
-
-        // If we already have user in context, no need to fetch
-        if (user) {
-          setLoading(false);
+          navigate('/');
           return;
         }
 
@@ -43,18 +34,18 @@ export default function Dashboard() {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        setUser(res.data); // ✅ update context
+        setUser(res.data);
         localStorage.setItem('userName', res.data.name);
-      } catch (error) {
-        console.error('Error fetching student profile:', error);
-        navigate('/'); // redirect to login on error
+      } catch (err) {
+        console.error('Error fetching student profile:', err);
+        navigate('/');
       } finally {
         setLoading(false);
       }
     };
 
     fetchProfile();
-  }, [navigate, user, setUser]);
+  }, [navigate]);
 
   if (loading)
     return (
@@ -89,6 +80,7 @@ export default function Dashboard() {
                 </span>
               )}
             </div>
+
             <div className="greeting">
               <h1>Hello, {user.name}</h1>
               <p>Welcome back!</p>
@@ -116,7 +108,7 @@ export default function Dashboard() {
         <div className="points-card">
           <div className="points-info">
             <p>Total Activity Points</p>
-            <h2>{user.totalPoints?.toLocaleString() || 0}</h2>          
+            <h2>{user.totalPoints?.toLocaleString() || 0}</h2>
           </div>
           <div className="award-icon">
             <Award size={32} color="#ca8a04" />
@@ -159,6 +151,7 @@ export default function Dashboard() {
                     <p>{activity.date}</p>
                   </div>
                 </div>
+
                 <div className="activity-right">
                   <p className="activity-points">+{activity.points} pts</p>
                   <span
@@ -177,7 +170,6 @@ export default function Dashboard() {
         </section>
       </main>
 
-      {/* Bottom Navigation */}
       <BottomNav activeTab="profile" />
     </div>
   );
