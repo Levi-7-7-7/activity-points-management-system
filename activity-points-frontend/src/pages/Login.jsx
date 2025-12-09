@@ -34,7 +34,7 @@ const handleRequestOTP = async () => {
 
   try {
     const res = await axios.post(
-      `${BASE_URL}/api/auth/start-login`,
+      `${BASE_URL}/auth/start-login`,
       { registerNumber: identifier }
     );
 
