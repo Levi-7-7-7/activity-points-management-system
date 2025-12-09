@@ -60,7 +60,7 @@ function App() {
 
         
         {/* ================= TUTOR ROUTES ================= */}
-        <Route path="/tutor/login" element={<TutorLogin />} />
+        <Route path="/tutor/login" element={<Login />} />
 
         {/* Tutor Dashboard (parent) */}
         <Route
