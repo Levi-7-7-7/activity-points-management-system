@@ -161,11 +161,11 @@ app.get('/api', (req, res) => {
 });
 
 // ===== Serve frontend (React build) if exists =====
-const buildPath = path.join(__dirname, '../frontend/build');
+const buildPath = path.join(__dirname, 'frontend-build');
 if (fs.existsSync(buildPath)) {
   app.use(express.static(buildPath));
 
-  // Serve index.html for all routes except /api/*
+  // Serve index.html for all non-API routes
   app.get(/^\/(?!api).*/, (req, res) => {
     res.sendFile(path.join(buildPath, 'index.html'));
   });
