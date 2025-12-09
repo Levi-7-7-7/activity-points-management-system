@@ -66,14 +66,14 @@ const sendOTPEmail = async (email, otp) => {
     const transporter = nodemailer.createTransport({
       host: 'smtp.gmail.com',
       port: 465,
-      // secure: false, // false for TLS
+      secure: true, // false for TLS
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS, // App Password
       },
-      tls: {
-        rejectUnauthorized: false,
-      },
+      // tls: {
+      //   rejectUnauthorized: false,
+      // },
     });
 
     const mailOptions = {
