@@ -11,7 +11,7 @@ import ResetPassword from './pages/ResetPassword';
 import PrivateRoute from './components/PrivateRoute';
 
 // ---------------------- Tutor Pages ----------------------
-import TutorLogin from './pages/TutorLogin';
+//import TutorLogin from './pages/TutorLogin';
 import TutorDashboard from './pages/TutorDashboard';
 import TutorPrivateRoute from './components/TutorPrivateRoute';
 

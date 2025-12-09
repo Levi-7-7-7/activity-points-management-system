@@ -17,7 +17,10 @@ router.post('/start-login', async (req, res) => {
     student.otpExpiry = Date.now() + 5 * 60 * 1000; // 5 mins
     await student.save();
 
-    await sendOTPEmail(student.email, otp);
+    const sent = await sendOTPEmail(student.email, otp);
+    if (!sent) {
+    return res.status(500).json({ error: "Failed to send OTP email" });
+    }
     res.json({ message: 'OTP sent to email', firstLoginCompleted: student.firstLoginCompleted });
   } catch (err) {
     res.status(500).json({ error: err.message });

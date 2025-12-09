@@ -80,3 +80,125 @@ exports.resetPassword = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// const crypto = require('crypto');
+// const bcrypt = require('bcryptjs');
+// const User = require('../models/Student');
+// const { Resend } = require('resend');
+
+// // Initialize Resend
+// const resend = new Resend(process.env.RESEND_API_KEY);
+
+
+// // 📌 Send Email using Resend
+// async function sendEmail(to, subject, html) {
+//   try {
+//     const data = await resend.emails.send({
+//       from: "Activity Points <onboarding@resend.dev>",
+//       to,
+//       subject,
+//       html,
+//     });
+
+//     console.log("📧 Email sent:", data);
+//     return true;
+//   } catch (error) {
+//     console.error("❌ Error sending email:", error);
+//     return false;
+//   }
+// }
+
+
+
+// /* ========================================================
+//    📌 REQUEST PASSWORD RESET (Sends Reset Email)
+// ======================================================== */
+// exports.requestPasswordReset = async (req, res) => {
+//   const { email } = req.body;
+
+//   try {
+//     const user = await User.findOne({ email });
+//     if (!user)
+//       return res.status(404).json({ message: 'User not found' });
+
+//     // Generate a secure reset token
+//     const token = crypto.randomBytes(32).toString('hex');
+
+//     // Save token & expiry for 1 hour
+//     user.resetPasswordToken = token;
+//     user.resetPasswordExpires = Date.now() + 3600000;
+//     await user.save();
+
+//     console.log('FRONTEND_URL:', process.env.FRONTEND_URL);
+
+//     const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+
+//     // Send email using Resend
+//     const emailSent = await sendEmail(
+//       email,
+//       'Password Reset Request',
+//       `<p>Click <a href="${resetUrl}">here</a> to reset your password. This link expires in 1 hour.</p>`
+//     );
+
+//     if (!emailSent)
+//       return res.status(500).json({ message: 'Failed to send email' });
+
+//     res.json({ message: 'Password reset email sent' });
+
+//   } catch (error) {
+//     console.error("❌ ERROR:", error);
+//     res.status(500).json({ message: 'Server error' });
+//   }
+// };
+
+
+
+// /* ========================================================
+//    📌 RESET PASSWORD (Sets New Password)
+// ======================================================== */
+// exports.resetPassword = async (req, res) => {
+//   const { token, newPassword } = req.body;
+
+//   try {
+//     console.log('Reset token received:', token);
+
+//     const user = await User.findOne({
+//       resetPasswordToken: token,
+//       resetPasswordExpires: { $gt: Date.now() }, // not expired
+//     });
+
+//     if (!user) {
+//       console.log('Invalid or expired token:', token);
+//       return res.status(400).json({ message: 'Invalid or expired token' });
+//     }
+
+//     // Hash the new password
+//     const salt = await bcrypt.genSalt(10);
+//     user.password = await bcrypt.hash(newPassword, salt);
+
+//     // Remove reset fields
+//     user.resetPasswordToken = undefined;
+//     user.resetPasswordExpires = undefined;
+
+//     await user.save();
+
+//     res.json({ message: 'Password updated successfully' });
+
+//   } catch (error) {
+//     console.error("❌ ERROR:", error);
+//     res.status(500).json({ message: 'Server error' });
+//   }
+// };
