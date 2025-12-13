@@ -1,6 +1,6 @@
 // src/pages/Login.jsx
 import React, { useState } from 'react';
-import { Eye, EyeOff, GraduationCap, User, Lock } from 'lucide-react';
+import { Eye, EyeOff, GraduationCap, User, Lock, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import axios from '../api/axiosInstance';
 import '../css/Login.css';
@@ -204,7 +204,15 @@ const handleRequestOTP = async () => {
             disabled={!identifier || !password || loading}
             style={{ marginTop: '1rem' }}
           >
-            {loading ? 'Signing In...' : 'Sign In'}
+         {/* MODIFIED CONTENT BELOW */}
+            {loading ? (
+              <>
+                <Loader2 size={20} className="spinner" /> 
+                Signing In...
+              </>
+            ) : (
+              'Sign In'
+            )}
           </button>
         ) : (
           <button
